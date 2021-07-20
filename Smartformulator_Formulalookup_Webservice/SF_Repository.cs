@@ -7,5 +7,6 @@ namespace Smartformulator_Formulalookup_Webservice
 {
     public class SF_Repository
     {
+        string value = "1";
     }
 }
