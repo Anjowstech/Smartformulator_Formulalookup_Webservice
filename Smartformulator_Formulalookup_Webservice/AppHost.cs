@@ -20,7 +20,7 @@ namespace Smartformulator_Formulalookup_Webservice
         public override void Configure(Container container)
         {
 
-         //   this.Plugins.Add(new PostmanFeature());
+         ////   this.Plugins.Add(new PostmanFeature());
             Plugins.Add(new CorsFeature(
     allowOriginWhitelist: new[] { "http://localhost", "http://localhost:5001", "http://run.plnkr.co" },
     allowCredentials: true,
