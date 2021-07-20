@@ -7,5 +7,12 @@ namespace Smartformulator_Formulalookup_Webservice
 {
     public class SF_RoutingClass
     {
+        [Route("/SearchCAS")]
+
+        public class SearchCASclass : IReturn<List<EntityClass.SearchCAS>>
+        {
+        }
+
+
     }
 }
