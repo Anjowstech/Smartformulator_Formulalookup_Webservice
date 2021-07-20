@@ -11,7 +11,7 @@ namespace Smartformulator_Formulalookup_Webservice
         /// Base constructor requires a Name and Assembly where web service implementation is located
         /// </summary>
         public AppHost()
-            : base("Smartformulator_Formulalookup_Webservice", typeof(MyServices).Assembly) { }
+            : base("Smartformulator_Formulalookup_Webservice", typeof(AppHost).Assembly) { }
 
         /// <summary>
         /// Application specific configuration
@@ -19,6 +19,13 @@ namespace Smartformulator_Formulalookup_Webservice
         /// </summary>
         public override void Configure(Container container)
         {
+
+            this.Plugins.Add(new PostmanFeature());
+            Plugins.Add(new CorsFeature(
+    allowOriginWhitelist: new[] { "http://localhost", "http://localhost:5001", "http://run.plnkr.co" },
+    allowCredentials: true,
+    allowedHeaders: "Content-Type, Allow, Authorization, X-Args"));
+            container.RegisterAutoWired<SF_Repository>();
             //Config examples
             //this.Plugins.Add(new PostmanFeature());
             //this.Plugins.Add(new CorsFeature());
