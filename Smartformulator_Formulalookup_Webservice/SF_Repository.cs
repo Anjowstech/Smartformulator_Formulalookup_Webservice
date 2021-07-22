@@ -42,25 +42,27 @@ namespace Smartformulator_Formulalookup_Webservice
             string cs = ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString;
             using (SqlConnection con = new SqlConnection(cs))
             {
-                PDRNo = "2120";
-                AddedDt = "2020";
-                FormulaCode = "DISPERSION-2064.Ver 02";
-                FormulaName = "FORMULANAMETEST";
-                TotalVOCPercentage = "30";
+                PDRNo = "3024";
+                AddedDt = "2021-12-07";
+                FormulaCode = "1112";
+                FormulaName = "formula2";
+                TotalVOCPercentage = "12";
                 double newvoc = double.Parse(TotalVOCPercentage);
-                TotalPercentage = "100";
+                TotalPercentage = "84";
                 double newtotal = double.Parse(TotalPercentage);
-                AddedBy = "NEWADD";
-                int newDt = Convert.ToDateTime(AddedDt);
-                operation = "Insert";
-
+                AddedBy = "Test1";
+                AddedDt = DateTime.Now.ToString();
+                DateTime newDt = DateTime.Parse(AddedDt);
+                operation = "Update";
                 switch (operation)
                 {
 
                     case "Insert":
                         {
 
-                            SqlCommand cmdinsert = new SqlCommand("Delete From AerosolVOCMain where FormulaCode = '" + FormulaCode + "'");
+                            excutqry("Delete From AerosolVOCMain Where FormulaCode = '" + FormulaCode + "'");
+                            excutqry("Delete From AerosolVOCDetail Where FormulaCode = '" + FormulaCode + "'");
+                            SqlCommand cmdinsert = new SqlCommand();
                             cmdinsert.CommandType = CommandType.StoredProcedure;
                             cmdinsert.CommandText = "sp_InsertAerosolVOCMain";
                             cmdinsert.Connection = con;
@@ -74,23 +76,27 @@ namespace Smartformulator_Formulalookup_Webservice
                             cmdinsert.Parameters.AddWithValue("@AddedDt", newDt);
                             SqlParameter ProcedureStatus = new SqlParameter();
 
-
-
                             ProcedureStatus.DbType = DbType.String;
                             ProcedureStatus.ParameterName = "@ProcedureStatus";
                             ProcedureStatus.Size = 100;
                             ProcedureStatus.Direction = ParameterDirection.Output;
                             cmdinsert.Parameters.Add(ProcedureStatus);
                             cmdinsert.ExecuteNonQuery();
+                     
                             if (ProcedureStatus.Value.ToString() == "Inserted")
                             {
+                                insertAerosolvocDetail();
                                 return "Inserted";
                             }
+                       
                             break;
+                
                         }
                     case "Update":
                         {
-                            SqlCommand cmdupdate = new SqlCommand("Delete From AerosolVOCMain where FormulaCode = '" + FormulaCode + "'");
+                            excutqry("Delete From AerosolVOCMain Where FormulaCode = '" + FormulaCode + "'");
+                            excutqry("Delete From AerosolVOCDetail Where FormulaCode = '" + FormulaCode + "'");
+                            SqlCommand cmdupdate = new SqlCommand();
                             cmdupdate.CommandType = CommandType.StoredProcedure;
                             cmdupdate.CommandText = "sp_InsertAerosolVOCMain";
                             cmdupdate.Connection = con;
@@ -111,23 +117,76 @@ namespace Smartformulator_Formulalookup_Webservice
                             ProcedureStatus.Direction = ParameterDirection.Output;
                             cmdupdate.Parameters.Add(ProcedureStatus);
                             cmdupdate.ExecuteNonQuery();
-                            if (ProcedureStatus.Value.ToString() == "Update")
+                            if (ProcedureStatus.Value.ToString() == "Inserted")
                             {
-                                return "Update";
+                                insertAerosolvocDetail();
+                                return "Inserted";
                             }
                             break;
 
                         }
-
-
-
+             
                 }
+          
                 return null;
             }
 
         
         
         }
+        public string excutqry(string strSQL)
+        {
+
+            string cs = ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+
+                SqlCommand cmd;
+                cmd = new SqlCommand(strSQL, con);
+                cmd.Connection = con;
+                con.Open();
+
+                try
+                {
+                    cmd.ExecuteNonQuery().ToString();
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+            }
+            return null;
+        }
+        public string insertAerosolvocDetail()
+
+        {
+            string FormulaCode = "1112";
+            string  Ingredients = "Ingtest2";
+            string FillRatio = "39";
+            double newratio = double.Parse(FillRatio);
+            string VOCPercentage = "72";
+            double newpercentage = double.Parse(VOCPercentage);
+            string VOCContributor = "VOCcontest";
+
+            string cs = ConfigurationManager.ConnectionStrings["myConnectionString"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                SqlCommand cmdinsert = new SqlCommand();
+                cmdinsert.CommandType = CommandType.StoredProcedure;
+                cmdinsert.CommandText = "sp_InsertAerosolVOCDetail";
+                cmdinsert.Connection = con;
+                con.Open();
+                cmdinsert.Parameters.AddWithValue("@FormulaCode", FormulaCode);
+                cmdinsert.Parameters.AddWithValue("@Ingredients", Ingredients);
+                cmdinsert.Parameters.AddWithValue("@FillRatio", newratio);
+                cmdinsert.Parameters.AddWithValue("@VOCPercentage", newpercentage);
+                cmdinsert.Parameters.AddWithValue("@VOCContributor", VOCContributor);
+                cmdinsert.ExecuteNonQuery();
+            }
+            return null;
+        }
+
 
     }
-  }
+}
